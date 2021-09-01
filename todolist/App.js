@@ -1,8 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Task from './components/Task';
 
 export default function App() {
+  const [task, setTask] = useState();
+  const [taskItems, setTaskItems] = useState([])
+  
+  const handleAddTask = () =>{
+    setTaskItems([...taskItems, task]);
+    setTask(null);
+  }
+
   return (
     <View style={styles.container}>
       
@@ -14,6 +22,11 @@ export default function App() {
           </Text>
 
           <View style={styles.items}>
+            {
+              taskItems.map((item) => {
+                return <Task text={item} />
+              })
+            }
             <Task text={'Task 1'} />
             <Task text={'Task 2'} />
             <Task text={'Task 3'} />
@@ -25,9 +38,9 @@ export default function App() {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.writeTaskWrapper}
             >
-             <TextInput style={styles.input} placeholder={"Write a Task"} />
+             <TextInput style={styles.input} placeholder={"Write a Task"} value={task} onChangeText={text => setTask(task)} />
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleAddTask()}> 
               <View style={ styles.AddWrapper}> 
                 <Text style={styles.addText}>+</Text>
               </View>
@@ -58,8 +71,7 @@ const styles = StyleSheet.create({
     marginTop: 30, 
   },
   writeTaskWrapper:{
-    position: 'absolute',
-    bottom: -320,
+    position: 'relative',
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
