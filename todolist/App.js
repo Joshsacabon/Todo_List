@@ -1,14 +1,21 @@
 import React, {useState} from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Task from './components/Task';
 
 export default function App() {
   const [task, setTask] = useState();
-  const [taskItems, setTaskItems] = useState([])
+  const [taskItems, setTaskItems] = useState([]);
   
   const handleAddTask = () =>{
+    Keyboard.dismiss();
     setTaskItems([...taskItems, task]);
     setTask(null);
+  }
+
+  const completeTask = (index) => {
+    let itemsCopy = [...taskItems];
+    itemsCopy.splice(index,1);
+    setTaskItems(itemsCopy);
   }
 
   return (
@@ -23,14 +30,14 @@ export default function App() {
 
           <View style={styles.items}>
             {
-              taskItems.map((item) => {
-                return <Task text={item} />
+              taskItems.map((item,index) => {
+                return( 
+                  <TouchableOpacity key={index} onPress={ () => completeTask(index)}>
+                         <Task text={item} />
+                  </TouchableOpacity>
+                )
               })
             }
-            <Task text={'Task 1'} />
-            <Task text={'Task 2'} />
-            <Task text={'Task 3'} />
-            <Task text={'Task 4'} />
             
           </View>
                    
@@ -38,7 +45,7 @@ export default function App() {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.writeTaskWrapper}
             >
-             <TextInput style={styles.input} placeholder={"Write a Task"} value={task} onChangeText={text => setTask(task)} />
+             <TextInput style={styles.input} placeholder={"Write a Task"} value={task} onChangeText={text => setTask(text)} />
 
             <TouchableOpacity onPress={() => handleAddTask()}> 
               <View style={ styles.AddWrapper}> 
